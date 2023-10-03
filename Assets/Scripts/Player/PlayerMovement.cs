@@ -17,11 +17,10 @@ public class PlayerMovement : MonoBehaviour
         mainCamera = Camera.main; // Ana kamera referansını al        
         anim = GetComponent<Animator>();
     }
+        
 
     public void Move(float horizontal, float vertical)
     {
-
-
         // Kameranın bakış yönünü al
         Vector3 cameraForward = mainCamera.transform.forward;
         cameraForward.y = 0;
