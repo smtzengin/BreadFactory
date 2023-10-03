@@ -1,42 +1,37 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private CharacterController characterController;
-    [SerializeField] private DynamicJoystick joystick;
-    [SerializeField, Range(1, 10)] private float _characterSpeed;
-    [SerializeField, Range(1, 10)] private float _rotationSpeed;
+    private CharacterController controller;
+    private Camera mainCamera;
+    public float speed = 5.0f;
+    public float distanceFromPlayer = 2.0f; // Kamera ile karakter arasındaki mesafe
+    public float rotationSpeed = 5f;
 
-    private Animator playerAnim;
-    private void Awake()
+    private void Start()
     {
-        characterController = GetComponent<CharacterController>();
-        playerAnim = GetComponent<Animator>();
+        controller = GetComponent<CharacterController>();
+        mainCamera = Camera.main; // Ana kamera referansını al        
     }
 
-    private void Update()
-    {        
-        Move(_characterSpeed);
-    }
-
-
-    private void Move(float speed)
+    public void Move(float horizontal, float vertical)
     {
-        var movementDirection = new Vector3(joystick.Direction.x,0f,joystick.Direction.y);
-        characterController.SimpleMove(movementDirection * speed);
+        // Kameranın bakış yönünü al
+        Vector3 cameraForward = mainCamera.transform.forward;
+        cameraForward.y = 0;
+        cameraForward.Normalize(); 
 
-        if (movementDirection.sqrMagnitude <= 0)
+        // Hareketi kameranın bakış açısına göre ayarla
+        Vector3 moveDirection = cameraForward * vertical + mainCamera.transform.right * horizontal;
+
+        // Karakterin rotasyonunu kameraya göre ayarla.
+        if (moveDirection != Vector3.zero)
         {
-            playerAnim.SetBool("isRun", false);
-            return;
-        }
-        playerAnim.SetBool("isRun", true);    
-
-        var targetDirection = Vector3.RotateTowards(transform.forward, movementDirection, _rotationSpeed * Time.deltaTime, 0.0f);
-
-        transform.rotation = Quaternion.LookRotation(targetDirection);
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }        
+        controller.SimpleMove(moveDirection * speed);
     }
 }
