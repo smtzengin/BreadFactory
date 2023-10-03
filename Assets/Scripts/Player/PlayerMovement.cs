@@ -9,15 +9,19 @@ public class PlayerMovement : MonoBehaviour
     public float speed = 5.0f;
     public float distanceFromPlayer = 2.0f; // Kamera ile karakter arasındaki mesafe
     public float rotationSpeed = 5f;
+    public Animator anim;
 
     private void Start()
     {
         controller = GetComponent<CharacterController>();
         mainCamera = Camera.main; // Ana kamera referansını al        
+        anim = GetComponent<Animator>();
     }
 
     public void Move(float horizontal, float vertical)
     {
+
+
         // Kameranın bakış yönünü al
         Vector3 cameraForward = mainCamera.transform.forward;
         cameraForward.y = 0;
