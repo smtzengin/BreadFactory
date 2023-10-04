@@ -19,20 +19,17 @@ public class ButtonClick : MonoBehaviour
     }
 
     private void OnMouseDown()
-    {
-        // Tıklama durumunu tersine çevir
+    {        
         isButtonClick = !isButtonClick;
         anim.SetBool("isButtonClick", isButtonClick);
-
-        // Eğer tıklama durumu değiştiyse, bir event tetikleyebilirsiniz (bu event üretim kontrolünü sağlayacak başka bir sınıfa yönlendirilebilir)
-        // Örnek olarak:
+        
         if (isButtonClick)
         {
-            breadSpawner.StartProduction(); // Üretimi başlatmak için GameManager sınıfındaki bir metodu çağırabilirsiniz.
+            breadSpawner.StartProduction();
         }
         else
         {
-            breadSpawner.StopProduction(); // Üretimi durdurmak için GameManager sınıfındaki bir metodu çağırabilirsiniz.
+            breadSpawner.StopProduction(); 
         }
     }
 

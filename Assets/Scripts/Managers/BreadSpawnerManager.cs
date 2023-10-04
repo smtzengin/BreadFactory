@@ -4,5 +4,7 @@ using UnityEngine;
 
 public class BreadSpawnerManager : MonoBehaviour
 {
+    [SerializeField] private GameObject[] _conveyors;
     
+
 }

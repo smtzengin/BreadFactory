@@ -34,8 +34,6 @@ public class BreadSpawner : MonoBehaviour
         isProductionActive = false;
         
     }
-
-
     void SpawnBread()
     {
         GameObject newBread = Instantiate(bread.breadPrefab, _breadSpawnPoint.position, Quaternion.identity);
