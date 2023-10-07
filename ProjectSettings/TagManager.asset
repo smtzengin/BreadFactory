@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Button
   - Bread
+  - BreadStock
+  - placementArea
   layers:
   - Default
   - TransparentFX

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -12,54 +11,51 @@ public class PlayerMovement : MonoBehaviour
     public Animator anim;
     public Transform _bagParent;
     public Transform[] _bag;
-    private int _bagCapacity = 10;
+    [SerializeField] private int _bagCapacity = 10;
 
-    private int currentBagStock = 0;
+    [SerializeField] private int currentBagStock = 0;
+    public int GetCurrentBagStock() { return currentBagStock; }
+    
 
     private void Start()
     {
         controller = GetComponent<CharacterController>();
         mainCamera = Camera.main;      
         anim = GetComponent<Animator>();
-        SetBagSlots();       
-
+        SetBagSlots();      
     }
 
     private void Update()
-    {
-        DrawRaycastAndCollectBread();
+    {        
+        DrawRaycastAndCollectBread();        
     }
 
     private void DrawRaycastAndCollectBread()
     {
-        if (_bagCapacity <= 10)
+        if (currentBagStock < 10)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit, 100f))
             {
-                if (hit.collider.CompareTag("Bread") && Input.GetMouseButton(0))
-                {
+                if (hit.collider.CompareTag("Bread") && Input.GetMouseButtonDown(0))
+                {                    
                     Bread bread = hit.collider.GetComponent<Bread>();
-                    if (bread != null)
-                    {
-                        bread.Collect(transform);
-                        hit.collider.transform.rotation = Quaternion.identity;
-                        hit.rigidbody.freezeRotation = true;
-                        currentBagStock++;
-                        GameManager.instance._uiManager.UpdateBagStock(currentBagStock);
+                    if (bread != null && bread.isCollectible)
+                    {                       
+                       bread.Collect(transform);
+                       currentBagStock++;
+                       GameManager.instance._uiManager.UpdateBagStock(currentBagStock);                                               
+                       hit.rigidbody.freezeRotation = true;
+                                             
                     }
                 }
             }
-        }
-        else
-        {
-            GameManager.instance._uiManager.UpdateBagStock(10);
-            return;
-        }
+        }        
     }
 
+    
     public Transform[] GetBagTransforms()
     {
         return _bag;
@@ -72,8 +68,25 @@ public class PlayerMovement : MonoBehaviour
         {
             GameObject emptyGameObject = new GameObject("EmptySlot" + i);
             emptyGameObject.transform.parent = _bagParent;
-            emptyGameObject.transform.localPosition = new Vector3(0f, 0.1f * i, -0.4f);
+            emptyGameObject.transform.localPosition = new Vector3(0f, 0.1f * i, 0f);
             _bag[i] = emptyGameObject.transform;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("placementArea"))
+        {
+            print("şu an placementArea'dayım" + other.gameObject.name);
+            Table table = other.GetComponentInParent<Table>();
+            if (table != null)
+            {           
+                print("masa bulundu" + table.name);
+                int placedBreadCount = table.PlaceBreadsFromCharacter(_bag);
+
+                currentBagStock -= placedBreadCount;
+                GameManager.instance._uiManager.UpdateBagStock(currentBagStock);
+            }
         }
     }
 

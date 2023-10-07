@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using DG.Tweening;
-using System;
+
 
 public class BreadSpawner : MonoBehaviour
 {
@@ -9,18 +9,25 @@ public class BreadSpawner : MonoBehaviour
     [SerializeField] private Transform _breadStockPoint;
 
     [SerializeField] private float spawnInterval = 5.0f; // Spawn aralığı
-    [SerializeField] private int numberOfStocks;
+    [SerializeField] public int numberOfStocks;
     [SerializeField] private int currentStock;
-    [SerializeField] private int totalSpawnItems;
 
     [SerializeField] private Transform pathParent;
     [SerializeField] private PathType pathType;
     [SerializeField] private Vector3[] pathArray;
 
     [SerializeField] private Bread bread;
+    [SerializeField] private Transform breadStock;
     [SerializeField] private ButtonClick startButton;
 
     private bool isProductionActive;
+
+    public int SetCurrentStock(int value)
+    {
+        currentStock = value;
+        return currentStock;
+    }
+    public int GetCurrentStock() { return currentStock; }
 
     public static BreadSpawner Instance;
 
@@ -31,13 +38,16 @@ public class BreadSpawner : MonoBehaviour
 
     private void Start()
     {               
-        isProductionActive = false;
-        
+        isProductionActive = false;        
     }
-    void SpawnBread()
+    private void Update()
     {
-        GameObject newBread = Instantiate(bread.breadPrefab, _breadSpawnPoint.position, Quaternion.identity);
+        if (currentStock >= numberOfStocks) StopProduction();
+    }
 
+    void SpawnBread()
+    {        
+        GameObject newBread = Instantiate(bread.breadPrefab, _breadSpawnPoint.position, Quaternion.identity,breadStock);
         for (int i = 0; i < pathArray.Length; i++)
         {
             pathArray[i] = pathParent.GetChild(i).position;
@@ -45,7 +55,9 @@ public class BreadSpawner : MonoBehaviour
 
         Tween t = newBread.transform.DOPath(pathArray, 3f, pathType).SetLookAt(0.001f);
         t.ForceInit();
-        currentStock++;
+        UpdateCurrentStock();
+        GameManager.instance._breadSpawner.totalFactoryStock++;
+        GameManager.instance._uiManager.UpdateFactoryStock();
     }
 
     IEnumerator SpawnPeriodically()
@@ -60,14 +72,29 @@ public class BreadSpawner : MonoBehaviour
         }
     }
 
+    public void UpdateCurrentStock()
+    {
+        SetCurrentStock(breadStock.transform.childCount);
+    }
+
+    public void DeCreaseCurrentStock(int value)
+    {
+        int newCurrentStock = currentStock - value;
+        SetCurrentStock(newCurrentStock);
+    }
+
     public void StartProduction()
     {
         isProductionActive = true;
+        UpdateCurrentStock();
         StartCoroutine(SpawnPeriodically());
+        
+
     }
     public void StopProduction()
     {
         isProductionActive = false;
+        UpdateCurrentStock();
         StopCoroutine(SpawnPeriodically());
     }
 

@@ -23,6 +23,7 @@ public class PlayerInputHandler : MonoBehaviour
         float vertical = leftJoystick.Vertical;
         playerMovement.Move(horizontal, vertical);
         playerMovement.anim.SetFloat("floatZ", vertical);
+        playerMovement.anim.SetFloat("floatX", horizontal);
 
         // rightJoystick ile kamera rotasyonu.
         float rotateX = rightJoystick.Horizontal;

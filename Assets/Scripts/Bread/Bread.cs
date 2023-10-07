@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,20 +7,25 @@ public class Bread : MonoBehaviour
     public GameObject breadPrefab;
     [SerializeField] private int saleFee;
     public bool isCollectible;
-    
+    private BreadSpawner breadSpawner;
+
+    private void Awake()
+    {
+        breadSpawner = GetComponentInParent<BreadSpawner>();
+    }
+
     public void Collect(Transform bagPositions)
-    {      
-        if (isCollectible)
+    {        
+        Transform[] playerBag = bagPositions.GetComponent<PlayerMovement>().GetBagTransforms();
+        int index = FindNextAvailableSlot(playerBag);
+        if (index != -1)
         {
-            isCollectible = false;
-            Transform[] playerBag = bagPositions.GetComponent<PlayerMovement>().GetBagTransforms();
-            int index = FindNextAvailableSlot(playerBag);
-            if (index != -1)
-            {
-                transform.parent = playerBag[index];
-                transform.localPosition = Vector3.zero;
-            }
+            transform.parent = playerBag[index];
+            transform.position = playerBag[index].position;
+            transform.rotation = playerBag[index].rotation;
+            GetComponentInChildren<ParticleSystem>().gameObject.SetActive(false);
         }
+        breadSpawner.DeCreaseCurrentStock(1);
     }
 
     private int FindNextAvailableSlot(Transform[] bagTransforms)
@@ -35,6 +40,19 @@ public class Bread : MonoBehaviour
         return -1;
     }
 
-  
+    private void OnTriggerEnter(Collider other)
+    {
+        if(!isCollectible && other.tag == "BreadStock")
+        {
+            StartCoroutine(WaitForCollect());
+        }
+    }
+
+    IEnumerator WaitForCollect()
+    {
+        yield return new WaitForSeconds(2f);
+        isCollectible = true;
+        
+    }
 
 }
