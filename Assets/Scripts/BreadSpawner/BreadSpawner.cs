@@ -87,8 +87,7 @@ public class BreadSpawner : MonoBehaviour
     {
         isProductionActive = true;
         UpdateCurrentStock();
-        StartCoroutine(SpawnPeriodically());
-        
+        StartCoroutine(SpawnPeriodically());        
 
     }
     public void StopProduction()

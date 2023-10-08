@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void DrawRaycastAndCollectBread()
     {
-        if (currentBagStock < 10)
+        if (currentBagStock < _bagCapacity)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
