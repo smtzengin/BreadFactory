@@ -15,7 +15,4 @@ public class BreadSpawnerManager : MonoBehaviour
             _conveyorsTotalStock += _conveyors[i].numberOfStocks;
         }
     }
-
-
-
 }

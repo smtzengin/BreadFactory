@@ -8,7 +8,7 @@ public class BreadSpawner : MonoBehaviour
     [SerializeField] private Transform _breadSpawnPoint;
     [SerializeField] private Transform _breadStockPoint;
 
-    [SerializeField] private float spawnInterval = 5.0f; // Spawn aralığı
+    [SerializeField] private float spawnInterval = 5.0f; 
     [SerializeField] public int numberOfStocks;
     [SerializeField] private int currentStock;
 

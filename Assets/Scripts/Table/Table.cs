@@ -46,7 +46,6 @@ public class Table : MonoBehaviour
                 breadCount++;
             }
         }
-
         return placedBreadCount; 
     }
 
@@ -62,7 +61,7 @@ public class Table : MonoBehaviour
 
         ReplaceBreads();
 
-        print(breadCount + " kadat ekmek alındı.");        
+        print(breadCount + " kadar ekmek alındı.");        
 
         return breadCount;
     }
@@ -102,7 +101,4 @@ public class Table : MonoBehaviour
             filledSlotIndex++;
         }
     }
-
-
-
 }
